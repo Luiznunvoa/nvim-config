@@ -39,6 +39,17 @@ vim.opt.signcolumn = 'yes'
 -- Decrease update time
 vim.opt.updatetime = 250
 
+vim.keymap.set("n", "ca", ":edit ~/.config/nvim/init.lua<CR>")
+
+-- Mapear Ctrl+n para a próxima tab
+vim.keymap.set("n", "<C-n>", ":tabnext<CR>", { desc = "Próxima tab" })
+
+-- Mapear Ctrl+p para a tab anterior
+vim.keymap.set("n", "<C-p>", ":tabprevious<CR>", { desc = "Tab anterior" })
+
+-- Mapear Ctrl+o para abrir uma nova tab
+vim.keymap.set("n", "<C-o>", ":tabnew<CR>", { desc = "Nova tab" })
+
 -- Lazy.nvim setup
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -79,17 +90,16 @@ require("lazy").setup({
     opts = {
       signs = {
         add = { text = '󱇬' },
-        change = { text = '' },
-        delete = { text = '󰆴' },
-        topdelete = { text = '󰠙' },
-        changedelete = { text = '󱂧' },
+        change = { text = ' ' },
+        delete = { text = ' ' },
+        topdelete = { text = '' },
+        changedelete = { text = '' },
       },
     },
   },
-  
   {
     "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" }, 
+    dependencies = { "nvim-lua/plenary.nvim" },
   },
 
   { -- Collection of various small independent plugins/modules
@@ -113,7 +123,52 @@ require("lazy").setup({
     },
     version = '^1.0.0', -- optional: only update when a new 1.x version is released
   },
+
+  {
+    "williamboman/mason.nvim",
+    dependencies = {
+      "williamboman/mason-lspconfig.nvim",
+      "neovim/nvim-lspconfig",
+    },
+    config = function()
+      require("config.mason-config")  -- Assumindo que o arquivo mason-config.lua está em ~/.config/nvim/lua/config/
+    end,
+  },
+
+  -- Add mason.nvim for managing LSP servers
+  {
+    "nvim-treesitter/nvim-treesitter",
+    run = ":TSUpdate",
+    config = function()
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = { "lua", "c", "javascript", "typescript" }, -- Adicionando suporte para JavaScript e TypeScript
+        highlight = {
+          enable = true, -- Enable Treesitter-based syntax highlighting
+        },
+        indent = {
+          enable = true, -- Enable automatic indentation based on Treesitter
+        },
+        autotag = {
+          enableg= true, -- Automatically close and rename HTML/JSX tags
+        },
+      })
+
+      -- Keybinding to inspect highlight groups under the cursor
+      vim.keymap.set("n", "vh", function()
+        local captures = vim.treesitter.get_captures_at_cursor(0)
+        if #captures == 0 then
+          print("No highlight groups found at cursor")
+        else
+          print("Highlight Groups:", vim.inspect(captures))
+        end
+      end, { noremap = true, silent = true })
+    end,
+  }
+
 })
+
+-- Enable syntax highlighting
+vim.cmd("syntax enable")
 
 -- Activate Melange theme after Lazy.nvim has loaded plugins
 vim.cmd("colorscheme melange")

@@ -19,7 +19,7 @@ M.setup = function()
 
     dashboard.section.buttons.val = {
         dashboard.button("e", "󰔶   New File", ":ene <BAR> startinsert <CR>"),
-        dashboard.button("d", "󰝤   Search Files", ":Telescope find_files<CR>"),
+        dashboard.button("d", "󰝤   Search Files", ":edit .<CR>"),
         dashboard.button("q", "   Quit", ":qa<CR>"),
     }
 
