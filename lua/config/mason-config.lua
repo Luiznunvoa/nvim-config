@@ -59,9 +59,17 @@ local servers = {
   },
 }
 
--- Apply configurations to each server
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 for server, config in pairs(servers) do
   lspconfig[server].setup(vim.tbl_extend("force", {
     on_attach = on_attach,
+    capabilities = capabilities,
   }, config))
 end
+
+-- Apply configurations to each server
+-- for server, config in pairs(servers) do
+  -- lspconfig[server].setup(vim.tbl_extend("force", {
+    -- on_attach = on_attach,
+  -- }, config))
+-- end

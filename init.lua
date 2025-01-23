@@ -135,6 +135,34 @@ require("lazy").setup({
     end,
   },
 
+  { -- Autocompletion framework
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",       -- Autocomplete integrado ao LSP
+      "hrsh7th/cmp-buffer",         -- Sugestões baseadas no buffer
+      "hrsh7th/cmp-path",           -- Sugestões para caminhos
+      "saadparwaiz1/cmp_luasnip",   -- Snippets com LuaSnip
+      "L3MON4D3/LuaSnip",           -- Motor de snippets Lua
+      "rafamadriz/friendly-snippets", -- Coleção de snippets para várias linguagens
+    },
+    config = function()
+      require("config.cmp-config") -- Configuração para o nvim-cmp
+    end,
+  },
+
+  { -- Auto pair
+    'windwp/nvim-autopairs',
+    config = function()
+      local npairs = require('nvim-autopairs')
+      npairs.setup({ check_ts = true })
+
+      -- Se estiver usando nvim-cmp, integre com o autopairs
+      local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+      local cmp = require('cmp')
+      cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+    end,
+  },
+
   -- Typescript Something
   { "windwp/nvim-ts-autotag" },
 
