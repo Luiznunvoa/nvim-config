@@ -1,8 +1,9 @@
 -- Sset Nerd Font
-vim.g.have_nerd_font = true
+vim.g.have_nerd_font = false
 
 -- Show line numbers
 vim.opt.number = true
+vim.wo.relativenumber = true
 
 -- Tab configuration
 vim.opt.tabstop = 2               -- Number of spaces for a tab
@@ -69,7 +70,7 @@ require("lazy").setup({
   -- Theme
   { "savq/melange-nvim" },
 
-  {
+  { -- Home Page
     "goolord/alpha-nvim",
     config = function()
       require("config.alpha-config").setup()
@@ -89,17 +90,13 @@ require("lazy").setup({
     'lewis6991/gitsigns.nvim',
     opts = {
       signs = {
-        add = { text = '󱇬' },
+        add = { text = ' 󱇬' },
         change = { text = ' ' },
         delete = { text = ' ' },
-        topdelete = { text = '' },
-        changedelete = { text = '' },
+        topdelete = { text = ' ' },
+        changedelete = { text = ' ' },
       },
     },
-  },
-  {
-    "folke/todo-comments.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
   },
 
   { -- Collection of various small independent plugins/modules
@@ -109,60 +106,58 @@ require("lazy").setup({
     end,
   },
 
-  {'romgrk/barbar.nvim',
+  { -- Plugin to add file tabs
+    'romgrk/barbar.nvim',
     dependencies = {
       'lewis6991/gitsigns.nvim', -- OPTIONAL: for git status
       'nvim-tree/nvim-web-devicons', -- OPTIONAL: for file icons
     },
     init = function() vim.g.barbar_auto_setup = false end,
     opts = {
-      -- lazy.nvim will automatically call setup for you. put your options here, anything missing will use the default:
-      -- animation = true,
-      -- insert_at_start = true,
-      -- …etc.
     },
-    version = '^1.0.0', -- optional: only update when a new 1.x version is released
+    config = function(_, opts)
+      require('barbar').setup(opts)
+
+      vim.keymap.set('n', 'gt', '<Cmd>BufferNext<CR>', { noremap = true, silent = true })
+      vim.keymap.set('n', 'gT', '<Cmd>BufferPrevious<CR>', { noremap = true, silent = true })
+    end,
+    version = '^1.0.0',
   },
 
-  {
+  { -- Manages Language servers
     "williamboman/mason.nvim",
     dependencies = {
       "williamboman/mason-lspconfig.nvim",
       "neovim/nvim-lspconfig",
     },
     config = function()
-      require("config.mason-config")  -- Assumindo que o arquivo mason-config.lua está em ~/.config/nvim/lua/config/
+      require("config.mason-config")
     end,
   },
 
-  -- Add mason.nvim for managing LSP servers
-  {
+  -- Typescript Something
+  { "windwp/nvim-ts-autotag" },
+
+  { -- Sintax Highlighting
     "nvim-treesitter/nvim-treesitter",
     run = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = { "lua", "c", "javascript", "typescript" }, -- Adicionando suporte para JavaScript e TypeScript
-        highlight = {
-          enable = true, -- Enable Treesitter-based syntax highlighting
-        },
-        indent = {
-          enable = true, -- Enable automatic indentation based on Treesitter
-        },
-        autotag = {
-          enableg= true, -- Automatically close and rename HTML/JSX tags
-        },
-      })
-
-      -- Keybinding to inspect highlight groups under the cursor
-      vim.keymap.set("n", "vh", function()
-        local captures = vim.treesitter.get_captures_at_cursor(0)
-        if #captures == 0 then
-          print("No highlight groups found at cursor")
-        else
-          print("Highlight Groups:", vim.inspect(captures))
-        end
-      end, { noremap = true, silent = true })
+      require("config.treesitter-config")
     end,
+  },
+
+  { -- Identation lines
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    opts = {},
+  },
+
+  { -- Status Bar
+    'nvim-lualine/lualine.nvim',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function()
+      require('config.lualine-config')
+    end
   }
 
 })
