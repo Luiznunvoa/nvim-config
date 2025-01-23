@@ -42,15 +42,6 @@ vim.opt.updatetime = 250
 
 vim.keymap.set("n", "ca", ":edit ~/.config/nvim/init.lua<CR>")
 
--- Mapear Ctrl+n para a próxima tab
-vim.keymap.set("n", "<C-n>", ":tabnext<CR>", { desc = "Próxima tab" })
-
--- Mapear Ctrl+p para a tab anterior
-vim.keymap.set("n", "<C-p>", ":tabprevious<CR>", { desc = "Tab anterior" })
-
--- Mapear Ctrl+o para abrir uma nova tab
-vim.keymap.set("n", "<C-o>", ":tabnew<CR>", { desc = "Nova tab" })
-
 -- Lazy.nvim setup
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
@@ -127,8 +118,10 @@ require("lazy").setup({
   { -- Manages Language servers
     "williamboman/mason.nvim",
     dependencies = {
-      "williamboman/mason-lspconfig.nvim",
-      "neovim/nvim-lspconfig",
+      "williamboman/mason-lspconfig.nvim", -- Gerencia LSPs
+      "jay-babu/mason-null-ls.nvim",       -- Integração com null-ls para ferramentas externas
+      "neovim/nvim-lspconfig",             -- Configura os servidores LSP
+      "jose-elias-alvarez/null-ls.nvim",   -- Null-ls para formatadores e linters
     },
     config = function()
       require("config.mason-config")
@@ -186,12 +179,21 @@ require("lazy").setup({
     config = function()
       require('config.lualine-config')
     end
-  }
+  },
 
+  {
+    "nvim-tree/nvim-tree.lua",
+    version = "*",
+    lazy = false,
+    dependencies = {
+      "nvim-tree/nvim-web-devicons",
+    },
+    config = function()
+     require("config.tree-config")
+    end,
+  },
 })
 
--- Enable syntax highlighting
 vim.cmd("syntax enable")
 
--- Activate Melange theme after Lazy.nvim has loaded plugins
 vim.cmd("colorscheme melange")

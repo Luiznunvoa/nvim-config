@@ -3,11 +3,15 @@ require("mason").setup()
 
 -- Setup mason-lspconfig and ensure servers are installed
 require("mason-lspconfig").setup({
-  ensure_installed = { "lua_ls", "clangd", "ts_ls" }, -- Corrigido "ts_ls" para "tsserver"
+  ensure_installed = { -- Adicionado eslint e alterado tsserver para ts_ls
+    "lua_ls", "clangd", "ts_ls", "eslint"
+  },
+  automatic_installation = true,
 })
 
 -- Import lspconfig for server configurations
 local lspconfig = require("lspconfig")
+
 local on_attach = function(client, bufnr)
   -- Keybindings for LSP navigation
   local opts = { noremap = true, silent = true, buffer = bufnr }
@@ -57,19 +61,22 @@ local servers = {
       },
     },
   },
+  eslint = { -- ESLint configuration
+    filetypes = { "javascript", "javascriptreact", "typescript", "typescriptreact", "vue" },
+    root_dir = lspconfig.util.root_pattern(".eslintrc", ".eslintrc.json", ".eslintrc.js", "package.json"),
+    settings = {
+      validate = "on",
+    },
+  },
 }
 
+-- Setup capabilities for auto-completion
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+-- Apply configurations to each server
 for server, config in pairs(servers) do
   lspconfig[server].setup(vim.tbl_extend("force", {
     on_attach = on_attach,
     capabilities = capabilities,
   }, config))
 end
-
--- Apply configurations to each server
--- for server, config in pairs(servers) do
-  -- lspconfig[server].setup(vim.tbl_extend("force", {
-    -- on_attach = on_attach,
-  -- }, config))
--- end
