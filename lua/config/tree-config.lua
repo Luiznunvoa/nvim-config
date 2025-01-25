@@ -13,10 +13,23 @@ require("nvim-tree").setup {
   },
     renderer = {
     group_empty = true,
+    icons = {
+      glyphs = {
+        git = {
+          unstaged = "",
+          staged = "",
+          unmerged = "",
+          renamed = "",
+          untracked = "?",
+          deleted = "X",
+          ignored = "󰟢",
+        },
+      },
+    },
   },
   filters = {
     dotfiles = true,
   },
 }
-vim.keymap.set('n', 'fl', '<Cmd>NvimTreeOpen<CR>', { noremap = true, silent = true })
-vim.keymap.set('n', 'fk', '<Cmd>NvimTreeClose<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'L', '<Cmd>NvimTreeOpen<CR>', { noremap = true, silent = true })
+vim.keymap.set('n', 'K', '<Cmd>NvimTreeClose<CR>', { noremap = true, silent = true })

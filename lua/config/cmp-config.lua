@@ -1,16 +1,34 @@
 local cmp = require("cmp")
 local luasnip = require("luasnip")
 
-require("luasnip.loaders.from_vscode").lazy_load() -- Carrega snippets compatíveis com VSCode
+require("luasnip.loaders.from_vscode").lazy_load()
 
--- Definindo snippets personalizados para C e TypeScript
-luasnip.snippets = {
-  c = {
-    luasnip.parser.parse_snippet("main", "#include <stdio.h>\n\nint main() {\n  return 0;\n}"),
-  },
-  typescript = {
-    luasnip.parser.parse_snippet("func", "function ${1:name}(${2:args}) {\n  ${3:body}\n}"),
-  },
+local kind_icons = {
+  Text = "",
+  Method = "󰆧",
+  Function = "󰊕",
+  Constructor = "",
+  Field = "󰇽",
+  Variable = "󰂡",
+  Class = "󰠱",
+  Interface = "",
+  Module = "",
+  Property = "󰜢",
+  Unit = "",
+  Value = "󰎠",
+  Enum = "",
+  Keyword = "󰌋",
+  Snippet = "",
+  Color = "󰏘",
+  File = "󰈙",
+  Reference = "",
+  Folder = "󰉋",
+  EnumMember = "",
+  Constant = "󰏿",
+  Struct = "",
+  Event = "",
+  Operator = "󰆕",
+  TypeParameter = "󰅲",
 }
 
 cmp.setup({
@@ -33,4 +51,23 @@ cmp.setup({
     { name = "buffer" },
     { name = "path" },
   }),
+  formatting = {
+    format = function(entry, vim_item)
+      local lspkind_ok, lspkind = pcall(require, "lspkind")
+      if not lspkind_ok then
+        -- From kind_icons array
+        vim_item.kind = string.format('%s %s', kind_icons[vim_item.kind], vim_item.kind)
+            vim_item.menu = ({
+              buffer = "[Buffer]",
+              nvim_lsp = "[LSP]",
+              luasnip = "[LuaSnip]",
+              nvim_lua = "[Lua]",
+              latex_symbols = "[LaTeX]",
+            })[entry.source.name]
+        return vim_item
+      else
+        return lspkind.cmp_format()(entry, vim_item)
+      end
+    end
+  }
 })
