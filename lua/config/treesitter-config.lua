@@ -9,7 +9,7 @@ require("nvim-treesitter.configs").setup({
     enable = true, -- Ativar indentação automática baseada no Tree-sitter
   },
   autotag = {
-    enable = true, -- Corrigido o erro de digitação
+    enable = false, -- Corrigido o erro de digitação
   },
 })
 
